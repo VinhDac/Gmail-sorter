@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inbox blocks · Settings</title>
+<link rel="stylesheet" href="options.css">
+</head>
+<body>
+<main>
+  <header class="top">
+    <img src="icons/48.png" width="40" height="40" alt="">
+    <div>
+      <h1>Inbox blocks</h1>
+      <p>Your Gmail home page, split into People, Codes, Accounts, Google and Other.</p>
+    </div>
+  </header>
+
+  <section class="card" aria-labelledby="c-title">
+    <div class="card-head">
+      <h2 id="c-title">Connection</h2>
+      <span id="badge" class="badge" hidden></span>
+    </div>
+    <ol class="steps">
+      <li>In your Apps Script project: <b>Deploy → New deployment → Web app</b>, with <i>Execute as: Me</i> and <i>Who has access: Only myself</i>.</li>
+      <li>Copy the <b>Web app URL</b> (it ends in <code>/exec</code>) and paste it here.</li>
+    </ol>
+    <label for="url">Web app URL</label>
+    <div class="field">
+      <input id="url" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="actions">
+      <button id="save" class="btn primary">Save and test</button>
+      <button id="clear" class="btn text" hidden>Disconnect</button>
+    </div>
+    <p id="msg" class="msg" role="status"></p>
+  </section>
+
+  <section class="card" aria-labelledby="a-title" id="auto">
+    <div class="row">
+      <div>
+        <h2 id="a-title">Clean my inbox automatically</h2>
+        <p class="hint">Automated mail leaves the inbox: job alerts, newsletters and Google news right away, codes after 30 minutes, bills and orders after 3 days. Nothing is deleted. Everything stays in its label, and starred mail always stays.</p>
+      </div>
+      <button id="toggle" class="switch" role="switch" aria-checked="false" aria-labelledby="a-title" disabled><span></span></button>
+    </div>
+    <div id="confirm" class="confirm" hidden>
+      <p>Automated mail already in your inbox will be moved out now.</p>
+      <div class="actions">
+        <button id="confirm-yes" class="btn primary">Turn on</button>
+        <button id="confirm-no" class="btn text">Cancel</button>
+      </div>
+    </div>
+    <p id="auto-msg" class="msg" role="status"></p>
+  </section>
+
+  <section class="card" aria-labelledby="m-title">
+    <div class="row">
+      <div>
+        <h2 id="m-title">Always animate</h2>
+        <p class="hint">Pip and the blocks move gently: new mail glows, Pip hops, blinks and naps. Off means following your computer's “reduce motion” setting.</p>
+        <p id="motion-note" class="hint" hidden>Your computer currently asks apps to reduce motion, so animations stay off unless you turn this on.</p>
+      </div>
+      <button id="motion" class="switch" role="switch" aria-checked="false" aria-labelledby="m-title"><span></span></button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="p-title">
+    <h2 id="p-title">On your phone</h2>
+    <p class="hint">Open the same link on your phone while signed in to this Google account. You get the blocks as a page, and codes copy with one tap. Then use <b>Add to Home Screen</b> to keep it like an app.</p>
+    <div class="actions">
+      <button id="copy-link" class="btn" disabled>Copy phone link</button>
+    </div>
+  </section>
+</main>
+<script src="options.js"></script>
+</body>
+</html>

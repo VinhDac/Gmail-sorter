@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inbox (12) - alex.doe@example.com - Gmail</title>
+<!-- Local preview of the extension: a Gmail-like page, a fake chrome.* API and the real content.js.
+     1. node test/sim.js --preview      (makes preview/blocks-data.json from the fake Gmail)
+     2. python -m http.server 8765      (in the repo folder)
+     3. open http://localhost:8765/preview/blocks.html#inbox   (?dark for the dark theme)
+     Press the refresh button in the preview to see a new mail arrive. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@600&display=swap">
+<style>
+  body{margin:0;font:14px Roboto,Arial,sans-serif;background:#f6f8fc;color:#1f1f1f}
+  body.dark{background:#111;color:#e3e3e3}
+  .top{height:64px;display:flex;align-items:center;gap:16px;padding:0 16px}
+  .logo{width:220px;font-size:22px;color:#444746}
+  .dark .logo{color:#c4c7c5}
+  .search{flex:1;max-width:720px;height:46px;border-radius:23px;background:#e9eef6;display:flex;align-items:center;padding:0 20px;color:#444746}
+  .dark .search{background:#2a2a2a;color:#a8abaf}
+  .wrap{display:flex}
+  nav{width:240px;padding:0 8px;flex-shrink:0}
+  .compose{width:140px;height:56px;border-radius:16px;background:#c2e7ff;display:flex;align-items:center;justify-content:center;margin:0 0 16px 8px;font-weight:500}
+  .dark .compose{background:#004a77;color:#c2e7ff}
+  .nav{height:32px;display:flex;align-items:center;padding:0 16px 0 26px;border-radius:0 16px 16px 0}
+  .nav.on{background:#d3e3fd;font-weight:700}
+  .dark .nav.on{background:#004a77}
+  .col{flex:1;min-width:0;margin:0 16px 16px 0;background:#fff;border-radius:16px;overflow:hidden}
+  .dark .col{background:#1f1f1f}
+  .tb{height:40px;display:flex;align-items:center;padding:0 16px;color:#5e5e5e;font-size:12px;justify-content:flex-end}
+  .main{height:calc(100vh - 64px - 40px - 16px);overflow:auto}
+  table{width:100%;border-collapse:collapse}
+  td{height:40px;border-bottom:1px solid #f1f1f1;padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px}
+  .dark td{border-color:#2c2c2c}
+</style>
+</head>
+<body>
+<div class="top"><div class="logo">Mail</div><div class="search">Search mail</div></div>
+<div class="wrap">
+  <nav>
+    <div class="compose">Compose</div>
+    <div class="nav on">Inbox</div><div class="nav">Starred</div><div class="nav">Sent</div><div class="nav">Drafts</div>
+  </nav>
+  <div class="col">
+    <div class="tb">1–50 of 1,284</div>
+    <div class="main" role="main">
+      <div class="gmail-list"><table id="list"></table></div>
+    </div>
+  </div>
+</div>
+<script>
+  if (location.search.includes('dark')) document.body.classList.add('dark');
+  if (!location.hash) history.replaceState(null, '', '#inbox');
+  const store = { local: {} };
+  let DATA = null;
+  let calls = 0;
+  window.chrome = {
+    storage: {
+      local: { get: async (k) => Object.fromEntries([].concat(k).filter((x) => x in store.local).map((x) => [x, store.local[x]])), set: async (o) => Object.assign(store.local, o), remove: async () => {} },
+      sync: { get: async () => ({ url: 'https://script.google.com/macros/s/PREVIEW/exec', motion: 'on' }), set: async () => {}, remove: async () => {} },
+      onChanged: { addListener: () => {} }
+    },
+    runtime: {
+      sendMessage: async (m) => {
+        if (m.type !== 'blocks') return;
+        await new Promise((r) => setTimeout(r, calls ? 700 : 900));
+        const d = JSON.parse(JSON.stringify(DATA));
+        d.at = Date.now();
+        if (calls++ > 0) {
+          // A new mail arrives on every refresh after the first load.
+          const people = d.blocks.find((b) => b.key === 'people');
+          people.items.unshift({ th: 'new' + calls, from: 'Jamie Fox', subj: 'Quick question about Friday', snip: 'Are we still on for 3pm?', ts: Date.now(), unread: true });
+          people.unread += 1;
+        }
+        return d;
+      }
+    }
+  };
+  fetch('blocks-data.json').then((r) => r.json()).then((d) => {
+    DATA = d;
+    const rows = d.blocks.flatMap((b) => b.items).sort((a, b) => b.ts - a.ts);
+    document.getElementById('list').innerHTML = rows.map((r) => '<tr><td style="width:180px;font-weight:' + (r.unread ? 700 : 400) + '">' + r.from + '</td><td>' + r.subj + ' – ' + r.snip + '</td></tr>').join('');
+    // Same order as the manifest: Pip first, then the blocks.
+    const load = (src) => new Promise((ok) => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = ok; document.body.appendChild(s); });
+    load('../extension/pip.js').then(() => load('../extension/content.js'));
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+preview/*.json
+preview/phone.html
+preview/panel.html
+.claude/
+node_modules/
+.DS_Store

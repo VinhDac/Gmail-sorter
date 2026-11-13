@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base target="_blank">
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--line:rgba(31,31,31,.08);--line-2:rgba(31,31,31,.16);--hover:rgba(31,31,31,.05);
+  --t1:#1f1f1f;--t2:#444746;--t3:#5e5e5e;--btn:#0b57d0;--btn-t:#fff;--ok:#146c2e;--sk:rgba(31,31,31,.07);
+  --people:#0b57d0;--codes:#a15c00;--account:#b3261e;--google:#146c2e;--other:#5e5e5e;--ease:cubic-bezier(.2,.8,.2,1)}
+@media (prefers-color-scheme:dark){:root{--bg:#131314;--card:#1e1f20;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16);--hover:rgba(255,255,255,.06);
+  --t1:#e3e3e3;--t2:#c4c7c5;--t3:#9aa0a6;--btn:#a8c7fa;--btn-t:#062e6f;--ok:#6dd58c;--sk:rgba(255,255,255,.07);
+  --people:#a8c7fa;--codes:#fdd663;--account:#f2b8b5;--google:#6dd58c;--other:#a8a8a8}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--t1);font:15px/21px "Google Sans",Roboto,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+:focus-visible{outline:2px solid var(--btn);outline-offset:2px;border-radius:12px}
+
+.app{max-width:560px;margin:0 auto;padding:0 12px calc(28px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top)) 4px 12px;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.top h1{margin:0;font-size:26px;line-height:32px;font-weight:400;letter-spacing:-.2px}
+.status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t3);margin-top:2px}
+.live{width:7px;height:7px;border-radius:50%;background:var(--t3);opacity:.5}
+.live.on{background:#1e8e3e;opacity:1;animation:beat 2.4s var(--ease) infinite}
+@keyframes beat{0%{box-shadow:0 0 0 0 rgba(30,142,62,.4)}70%,100%{box-shadow:0 0 0 7px rgba(30,142,62,0)}}
+.grow{flex:1}
+.icon{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--t2);transition:background .2s,transform .2s var(--ease)}
+.icon:active{background:var(--hover);transform:scale(.92)}
+.spin svg{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;position:relative;animation:rise .55s var(--ease) both;animation-delay:calc(var(--i) * 60ms)}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:70px;pointer-events:none;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 7%,transparent),transparent)}
+.no-intro .card{animation:none}
+@keyframes rise{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+.head{position:relative;display:flex;align-items:center;gap:10px;padding:14px 8px 6px 16px}
+.ico{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+.head h2{margin:0;font-size:16px;font-weight:500}
+.count{min-width:22px;height:20px;padding:0 7px;border-radius:10px;font-size:12px;line-height:20px;font-weight:600;text-align:center;color:#fff;background:var(--c);font-variant-numeric:tabular-nums}
+@media (prefers-color-scheme:dark){.count{color:#1f1f1f}}
+.rows{padding:0 6px 8px}
+.row{display:flex;align-items:flex-start;gap:10px;min-height:60px;padding:10px 10px;border-radius:14px;transition:background .15s,transform .15s var(--ease)}
+.row:active{background:var(--hover);transform:scale(.99)}
+.dot{width:8px;height:8px;margin-top:7px;border-radius:50%;flex-shrink:0}
+.unread .dot{background:var(--c)}
+.body{flex:1;min-width:0}
+.line{display:flex;align-items:baseline;gap:8px}
+.from{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t2)}
+.time{margin-left:auto;flex-shrink:0;font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums}
+.subj{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:var(--t3);margin-top:1px}
+.unread .from,.unread .subj{font-weight:600;color:var(--t1)}
+.unread .time{color:var(--t1)}
+
+.hero{padding:16px 16px 18px}
+.hero .label{display:flex;gap:6px;font-size:13px;color:var(--t2);position:relative}
+.hero .digits{position:relative;margin:6px 0 2px;font:600 40px/48px "Roboto Mono",ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:4px;font-variant-numeric:tabular-nums;border-radius:8px}
+.life{display:block;height:3px;margin:8px 0 14px;border-radius:2px;background:var(--line);overflow:hidden;position:relative}
+.life::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w0);background:var(--c);border-radius:2px;animation:drain var(--left) linear forwards}
+@keyframes drain{to{width:0}}
+.bigbtn{position:relative;width:100%;height:50px;border-radius:25px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500;
+  background:var(--btn);color:var(--btn-t);transition:transform .15s,background .2s}
+.bigbtn:active{transform:scale(.98)}
+.bigbtn.ok{background:transparent;color:var(--ok);box-shadow:inset 0 0 0 1.5px var(--ok)}
+.flash{animation:flash .9s var(--ease)}
+@keyframes flash{0%{background:color-mix(in srgb,var(--c) 30%,transparent)}100%{background:transparent}}
+
+.coderow{display:flex;align-items:center;gap:6px}
+.coderow .row{flex:1;min-width:0}
+.code{display:block;margin-top:2px;font:600 20px/26px "Roboto Mono",ui-monospace,monospace;letter-spacing:2px;color:var(--t1);border-radius:6px}
+.stale .code{color:var(--t3);font-size:16px}
+.copy{height:40px;padding:0 14px;margin-right:6px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;
+  border:1px solid var(--line-2);color:var(--t2);transition:transform .15s}
+.copy:active{transform:scale(.95)}
+.copy.ok{color:var(--ok);border-color:var(--ok)}
+
+.fold{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .35s var(--ease),opacity .3s}
+.fold.open{grid-template-rows:1fr;opacity:1}
+.fold-in{overflow:hidden;min-height:0}
+.more{display:flex;align-items:center;gap:4px;min-height:44px;padding:0 12px;margin:0 4px;border-radius:12px;font-size:14px;font-weight:500;color:var(--btn)}
+.more svg{transition:transform .3s var(--ease)}
+.more[aria-expanded="true"] svg{transform:rotate(180deg)}
+.empty{display:flex;align-items:center;gap:10px;padding:6px 16px 16px;font-size:14px;color:var(--t3)}
+.empty svg{padding:4px;border-radius:50%;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.note{padding:18px 16px;font-size:14px;color:var(--t2)}
+.note .bigbtn{margin-top:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;padding:10px 18px;border-radius:20px;
+  background:#1f1f1f;color:#fff;font-size:14px;transition:opacity .25s,transform .3s var(--ease);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <h1>Inbox</h1>
+      <div class="status" id="status"><span class="live"></span><span>Loading…</span></div>
+    </div>
+    <span class="grow"></span>
+    <button class="icon" id="refresh" aria-label="Refresh"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3 M19.5 4.5v4h-4"/></svg></button>
+  </header>
+  <main class="stack" id="root"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+var PAYLOAD = <?!= payload ?>;
+</script>
+<script>
+(function () {
+  var ICON = {
+    people: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M5 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5',
+    codes: 'M8 20a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z M11.2 12.3L20 3.5 M17 6.5l2.5 2.5 M14.5 9l2 2',
+    account: 'M12 3.5l7 2.8v5.4c0 4.2-3 7.6-7 8.8-4-1.2-7-4.6-7-8.8V6.3z M9.5 12l2 2 3.5-4',
+    google: 'M5 5h5v5H5z M14 5h5v5h-5z M5 14h5v5H5z M14 14h5v5h-5z',
+    other: 'M4 13l2.5-8h11L20 13v6H4z M4 13h4.5l1.5 2.5h4l1.5-2.5H20',
+    copy: 'M9 9h10v11H9z M15 9V4H5v11h4',
+    check: 'M5 12.5l4.5 4.5L19 7.5',
+    chevron: 'M6 9l6 6 6-6'
+  };
+  var EMPTY = { people: 'No new mail from people', codes: 'No codes right now', account: 'Nothing needs your attention', google: 'No news from Google', other: 'Nothing else' };
+  var SHOW = { people: 4, codes: 3, account: 3, google: 3, other: 2 };
+  var FRESH_MS = 15 * 60 * 1000;
+  var EARLIER_MS = 24 * 3600 * 1000;
+  var data = PAYLOAD;
+  var loading = false;
+  var open = {};
+  var root = document.getElementById('root');
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function svg(d, n) { return '<svg width="' + n + '" height="' + n + '" viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '"/></svg>'; }
+  function spaced(c) { return /^\d{6}$/.test(c) ? c.slice(0, 3) + ' ' + c.slice(3) : /^\d{8}$/.test(c) ? c.slice(0, 4) + ' ' + c.slice(4) : c; }
+  function when(ts) {
+    var d = new Date(ts), now = new Date();
+    if (d.toDateString() === now.toDateString()) return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+  function ago(ts) {
+    var m = Math.round((Date.now() - ts) / 60000);
+    return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : Math.round(m / 60) + ' h ago';
+  }
+  function gmailLink(th) {
+    return 'https://mail.google.com/mail/?authuser=' + encodeURIComponent(data.me || '') + '#inbox/' + encodeURIComponent(th);
+  }
+
+  function row(it) {
+    return '<a class="row' + (it.unread ? ' unread' : '') + '" href="' + gmailLink(it.th) + '">' +
+      '<span class="dot"></span><span class="body"><span class="line"><span class="from">' + esc(it.from) + '</span><span class="time">' + when(it.ts) + '</span></span>' +
+      '<span class="subj">' + esc(it.subj) + '</span></span></a>';
+  }
+  function codeRow(it) {
+    if (!it.code) return row(it);
+    var stale = Date.now() - it.ts > FRESH_MS;
+    return '<div class="coderow' + (it.unread ? ' unread' : '') + (stale ? ' stale' : '') + '">' + '<a class="row" href="' + gmailLink(it.th) + '">' +
+      '<span class="dot"></span><span class="body"><span class="line"><span class="from">' + esc(it.from) + '</span><span class="time">' + when(it.ts) + '</span></span>' +
+      '<span class="code">' + esc(spaced(it.code)) + '</span></span></a>' +
+      '<button class="copy" data-code="' + esc(it.code) + '" aria-label="Copy code ' + esc(it.code) + '">' + svg(ICON.copy, 16) + '<span>Copy</span></button></div>';
+  }
+  function fold(key, inner, n) {
+    var o = !!open[key];
+    return '<div class="fold' + (o ? ' open' : '') + '" data-fold="' + key + '"><div class="fold-in">' + inner + '</div></div>' +
+      '<button class="more" data-key="' + key + '" data-n="' + n + '" aria-expanded="' + o + '"><span>' + (o ? 'Show less' : 'Show ' + n + ' more') + '</span>' + svg(ICON.chevron, 18) + '</button>';
+  }
+
+  function hero(codes) {
+    var it = codes.items.filter(function (x) { return x.code && Date.now() - x.ts < FRESH_MS; })[0];
+    if (!it) return '';
+    var left = Math.max(0, FRESH_MS - (Date.now() - it.ts));
+    return '<section class="card hero" style="--c:var(--codes);--i:0" aria-label="Latest code">' +
+      '<div class="label">Latest code · ' + esc(it.from) + ' · ' + ago(it.ts) + '</div>' +
+      '<div class="digits" id="hero-digits">' + esc(spaced(it.code)) + '</div>' +
+      '<span class="life" style="--w0:' + (left / FRESH_MS * 100).toFixed(1) + '%;--left:' + Math.round(left / 1000) + 's"></span>' +
+      '<button class="bigbtn" data-code="' + esc(it.code) + '" data-hero="1">' + svg(ICON.copy, 18) + '<span>Copy code</span></button></section>';
+  }
+
+  function card(b, i) {
+    var items = b.items;
+    var body;
+    if (!items.length) {
+      body = '<div class="empty">' + svg(ICON.check, 22) + '<span>' + EMPTY[b.key] + '</span></div>';
+    } else {
+      var pick = b.key === 'codes' ? codeRow : row;
+      var list = items;
+      var earlier = [];
+      if (b.key === 'codes') {
+        list = items.filter(function (x) { return Date.now() - x.ts < EARLIER_MS; });
+        earlier = items.filter(function (x) { return Date.now() - x.ts >= EARLIER_MS; });
+      }
+      var first = list.slice(0, SHOW[b.key]).map(pick).join('');
+      var rest = list.slice(SHOW[b.key]).concat(earlier);
+      body = '<div class="rows">' + (first || '') + (rest.length ? fold(b.key, rest.map(pick).join(''), rest.length) : '') + '</div>';
+      if (!first && !rest.length) body = '<div class="empty">' + svg(ICON.check, 22) + '<span>' + EMPTY[b.key] + '</span></div>';
+    }
+    var unread = b.unread;
+    return '<section class="card" style="--c:var(--' + b.key + ');--i:' + i + '" aria-label="' + esc(b.title) + '">' +
+      '<div class="head"><span class="ico">' + svg(ICON[b.key], 19) + '</span><h2>' + esc(b.title) + '</h2>' +
+      (unread ? '<span class="count">' + unread + '</span>' : '') + '</div>' + body + '</section>';
+  }
+
+  function render(intro) {
+    var status = document.getElementById('status');
+    if (!data || !data.ok) {
+      status.innerHTML = '<span class="live"></span><span>Not updated</span>';
+      root.innerHTML = '<section class="card" style="--c:var(--account);--i:0"><div class="note">' +
+        esc((data && data.error) || 'Could not load your inbox.') + '<button class="bigbtn" id="retry">Try again</button></div></section>';
+      return;
+    }
+    var live = Date.now() - data.at < 5 * 60 * 1000;
+    status.innerHTML = '<span class="live' + (live ? ' on' : '') + '"></span><span>' + (loading ? 'Updating…' : 'Updated ' + ago(data.at)) + '</span>';
+    var byKey = {};
+    data.blocks.forEach(function (b) { byKey[b.key] = b; });
+    var html = byKey.codes ? hero(byKey.codes) : '';
+    var order = ['people', 'codes', 'account', 'google', 'other'];
+    html += order.filter(function (k) { return byKey[k]; }).map(function (k, i) { return card(byKey[k], i + 1); }).join('');
+    root.className = 'stack' + (intro ? '' : ' no-intro');
+    root.innerHTML = html;
+  }
+
+  function copyText(text) {
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(fallback);
+      else fallback();
+    } catch (e) { fallback(); }
+  }
+
+  var toastTimer;
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1600);
+  }
+
+  function refresh() {
+    if (loading || !window.google || !google.script || !google.script.run) return;
+    loading = true;
+    document.getElementById('refresh').classList.add('spin');
+    render(false);
+    google.script.run
+      .withSuccessHandler(function (res) { loading = false; document.getElementById('refresh').classList.remove('spin'); data = res; render(false); })
+      .withFailureHandler(function (err) { loading = false; document.getElementById('refresh').classList.remove('spin'); data = { ok: false, error: String(err && err.message || err) }; render(false); })
+      .blocksForPage(true);
+  }
+
+  document.addEventListener('click', function (e) {
+    var copy = e.target.closest('[data-code]');
+    if (copy) {
+      e.preventDefault();
+      copyText(copy.getAttribute('data-code'));
+      copy.classList.add('ok');
+      var label = copy.querySelector('span');
+      var before = label ? label.textContent : '';
+      if (label) label.textContent = 'Copied';
+      var digits = copy.getAttribute('data-hero') ? document.getElementById('hero-digits') : copy.parentNode.querySelector('.code');
+      if (digits) { digits.classList.remove('flash'); void digits.offsetWidth; digits.classList.add('flash'); }
+      toast('Code copied');
+      setTimeout(function () { copy.classList.remove('ok'); if (label) label.textContent = before; }, 1800);
+      return;
+    }
+    var more = e.target.closest('.more');
+    if (more) {
+      var key = more.getAttribute('data-key');
+      open[key] = !open[key];
+      var box = document.querySelector('[data-fold="' + key + '"]');
+      if (box) box.classList.toggle('open', open[key]);
+      more.setAttribute('aria-expanded', String(open[key]));
+      more.querySelector('span').textContent = open[key] ? 'Show less' : 'Show ' + more.getAttribute('data-n') + ' more';
+      return;
+    }
+    if (e.target.closest('#refresh') || e.target.closest('#retry')) refresh();
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && data && data.ok && Date.now() - data.at > 60 * 1000) refresh();
+  });
+
+  render(true);
+  if (data && data.ok && Date.now() - data.at > 60 * 1000) refresh();
+})();
+</script>
+</body>
+</html>
