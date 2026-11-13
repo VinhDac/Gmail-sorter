@@ -56,7 +56,13 @@ If your computer asks apps to reduce motion, Pip only blinks and changes face. T
 
 ## Install
 
-About 15 minutes, once.
+About 10–15 minutes, once.
+
+Everyone runs their own copy: the script lives in your own Google account, so your mail never passes through anyone else's.
+
+**Got a template link from a friend?**
+1. Open it, go to **Overview**, and choose **Make a copy**.
+2. In your copy, run `setup` as in step 1.4 below, then continue with steps 2 and 3. You don't need to paste any files.
 
 ### 1. The script
 1. Open [script.google.com](https://script.google.com) → **New project**, and name it `Inbox sorter`.
@@ -79,8 +85,8 @@ About 15 minutes, once.
 **Deploy → New deployment → ⚙ → Web app**, with **Execute as: Me** and **Who has access: Only myself**. Copy the **Web app URL** (it ends in `/exec`).
 
 ### 3. The Chrome extension
-1. Open `chrome://extensions` and turn on **Developer mode**.
-2. Choose **Load unpacked**, then select the [`extension`](extension) folder.
+1. Download `inbox-blocks-extension-….zip` from the [latest release](https://github.com/VinhDac/Gmail-sorter/releases/latest) and unzip it somewhere permanent, for example `Documents/Inbox blocks`. Or use the [`extension`](extension) folder of this repo.
+2. Open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked**, then select that folder.
 3. Click the extension's icon. Paste the web app URL and press **Save and test**.
 4. Reload Gmail.
 
@@ -110,7 +116,14 @@ After you change a `.gs` or `.html` file in Apps Script, publish a new version o
 
 **Deploy → Manage deployments → ✏️ → Version: New version → Deploy**
 
-After you change the extension, press the reload button on its card in `chrome://extensions`.
+For a new extension version, unzip the new release over the old folder, then press the reload button on its card in `chrome://extensions`.
+
+### Sharing with friends
+Make a clean template project:
+1. Create a new Apps Script project and paste the five files, but **don't run `setup`** in it.
+2. Share it as **Anyone with the link · Viewer**, and send that link privately: viewers can see your Google account name.
+
+Friends make a copy and follow the steps above. [HUONG-DAN.md](HUONG-DAN.md) walks through it in Vietnamese.
 
 ## Development
 
